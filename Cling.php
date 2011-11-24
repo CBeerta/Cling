@@ -161,7 +161,7 @@ class Cling
     **/
     public function option($longopt, $value = null)
     {
-        if ($value === null) {
+        if ($value === null && isset($this->_options[$longopt])) {
             return $this->_options[$longopt];
         }
         
@@ -175,7 +175,7 @@ class Cling
     *
     * @return mixed
     **/
-    public function config($file)
+    public function configure($file)
     {
         $config = parse_ini_file($file);
 
@@ -216,6 +216,10 @@ class Cling
     **/
     public function run()
     {
+        if (PHP_SAPI !== 'cli') {
+            throw new Exception ("This is a Command Line Application.");
+        }
+        
         try 
         {
             $options = getopt(implode($this->_shortopts), $this->_longopts);
@@ -239,6 +243,9 @@ class Cling
         } 
         catch (Exception $e) 
         {
+            if ($this->option('debug')) {
+                throw new Exception($e);
+            }
         }
     }
 
