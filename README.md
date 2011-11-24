@@ -18,7 +18,8 @@ As Cling is **very** new, there's still lot of work left to be done
 * Template System
 * Logging
 * Proper Error and Eception Handling
- 
+* Piped Input
+
 # Requirements
 
 * PHP 5.3
@@ -31,7 +32,7 @@ As Cling is **very** new, there's still lot of work left to be done
     $app = new Cling();
     $app->command('hello-world:', function($name) {
         echo "Hello $name\n";
-    });
+    })->help("Hello World Example Command.");
 
     $app->run();
 

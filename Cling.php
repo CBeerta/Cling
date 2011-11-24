@@ -58,6 +58,11 @@ class Cling
     private $_longopts = array();
     
     /**
+    * All Help Texts
+    **/    
+    private $_helptexts = array();
+
+    /**
     * The Routes
     **/    
     private $_routes = array();
@@ -120,7 +125,7 @@ class Cling
     *
     * @param mixed $args See Comment for arguments
     *
-    * @return void
+    * @return self
     **/
     public function command($args = false)
     {
@@ -149,6 +154,22 @@ class Cling
         
         $this->_shortopts[] = $shortopt;
         $this->_longopts[] = $longopt;
+        $this->_helptexts[] = '';
+                
+        return $this;
+    }
+
+    /**
+    * Add a Helptext to a Command
+    *
+    * @param string $text Helptext
+    *
+    * @return void
+    **/
+    function help($text)
+    {   
+        $index = count($this->_routes) - 1;
+        $this->_helptexts[$index] = $text;
     }
     
     /**
@@ -185,7 +206,7 @@ class Cling
     }
 
     /**
-    * Print Info about Cling
+    * Print Help
     *
     * @return void
     **/
@@ -201,8 +222,12 @@ class Cling
             } else {
                 $str .= "    ";
             }
-            $str .= "--" . rtrim($v, ':');
             
+            // TODO: Help Text should align to longest longopt
+            //       And should also replate linebreaks with correct position
+            $str .= sprintf("--%-30s",rtrim($v, ':'));
+            
+            $str .= "\t{$this->_helptexts[$k]}";
             $str .= "\n";
         }
 
@@ -223,9 +248,6 @@ class Cling
         try 
         {
             $options = getopt(implode($this->_shortopts), $this->_longopts);
-
-            $executed = false;
-            
             /**
             * Go through all routes, and execute commands
             **/
@@ -235,7 +257,6 @@ class Cling
                         || rtrim($route['longopt'], ':') === $k
                     ) {
                         $route['command']($v);
-                        $executed = true;
                         continue;
                     }
                 }                
@@ -245,12 +266,12 @@ class Cling
         {
             if ($this->option('debug')) {
                 throw new Exception($e);
+            } else {
+                die("Application terminated unexpectedly.\n");
             }
         }
     }
 
 
 }
-
-
 
