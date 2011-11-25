@@ -32,6 +32,12 @@
 **/
 
 /**
+* Register Autoloader
+* Loads "Cling_*" Class files from the directory Cling.php is located in
+**/
+spl_autoload_register(array('Cling', 'autoload'));
+
+/**
 * Cling - Microframework for CLI Applications
 *
 * @category CLI
@@ -131,31 +137,17 @@ class Cling
             throw new Exception("Command not Callable");
         }
         
-        $this->_routes[] = array(
-            'longopt' => $longopt,
-            'shortopt' => $shortopt,
-            'command' => $command,
-            'helptext' => '',
-        );
-                
-        return $this;
+        $route = new Cling_Route();
+        $route->longopt($longopt)
+            ->shortopt($shortopt)
+            ->callable($command)
+            ->help('');
+
+        $this->_routes[] = $route;
+        
+        return $route;
     }
 
-    /**
-    * Add a Helptext to a Command
-    *
-    * @param string $text Helptext
-    *
-    * @return void
-    **/
-    function help($text)
-    {   
-        // "guess" the last route added.
-        // FIXME: this could be more elegant
-        $index = count($this->_routes) - 1;
-        $this->_routes[$index]['helptext'] = $text;
-    }
-    
     /**
     * Add a option
     *
@@ -190,6 +182,29 @@ class Cling
     }
 
     /**
+    * Autoload classes
+    *
+    * @param string $class Class Name
+    *
+    * @return void
+    **/
+    public static function autoload($class)
+    {
+        if (strpos($class, 'Cling') !== 0) {
+            return;
+        }
+
+        $file = dirname(__FILE__) 
+            . '/' 
+            . str_replace('_', DIRECTORY_SEPARATOR, substr($class, 5)) 
+            . '.php';
+            
+        if ( file_exists($file) ) {
+            include_once $file;
+        }    
+    }
+
+    /**
     * Print Help
     *
     * @return void
@@ -201,17 +216,17 @@ class Cling
         foreach ($this->_routes as $route) {
             
             $str .= "\t";
-            if (!empty($route['shortopt'])) {
-                $str .= "-" . rtrim($route['shortopt'], ':') . ", ";
+            if ($route->shortopt()) {
+                $str .= "-" . rtrim($route->shortopt(), ':') . ", ";
             } else {
                 $str .= "    ";
             }
             
             // TODO: Help Text should align to longest longopt
             //       And should also replate linebreaks with correct position
-            $str .= sprintf("--%-30s",rtrim($route['longopt'], ':'));
+            $str .= sprintf("--%-30s", rtrim($route->longopt(), ':'));
             
-            $str .= "\t{$route['helptext']}";
+            $str .= "\t" . $route->help();
             $str .= "\n";
         }
 
@@ -226,7 +241,7 @@ class Cling
     public function run()
     {
         if (PHP_SAPI !== 'cli') {
-            throw new Exception ("This is a Command Line Application.");
+            throw new Exception("This is a Command Line Application.");
         }
         
         try 
@@ -237,21 +252,30 @@ class Cling
             $shortopts = '';
             $longopts = array();
             foreach ($this->_routes as $route) {
-                $shortopts .= $route['shortopt'];
-                $longopts[] = $route['longopt'];
+                $shortopts .= $route->shortopt();
+                $longopts[] = $route->longopt();
             }
             
             $options = getopt($shortopts, $longopts);
+
+            /**
+            * No (valid) Options give.
+            * FIXME: How to handle the help text?
+            **/
+            if (empty($options)) {
+                echo $this;
+                exit;
+            }
             
             /**
             * Go through all routes, and execute commands
             **/
             foreach ($this->_routes as $route) {
                 foreach ($options as $k=>$v) {
-                    if (rtrim($route['shortopt'], ':') === $k 
-                        || rtrim($route['longopt'], ':') === $k
+                    if (rtrim($route->shortopt(), ':') === $k 
+                        || rtrim($route->longopt(), ':') === $k
                     ) {
-                        $route['command']($v);
+                        $route->dispatch($v);
                         continue;
                     }
                 }                

@@ -5,10 +5,12 @@
 
 require_once 'Cling.php';
 
-$app = new Cling();
+$app = new Cling(array('debug' => true));
 
 /**
-* Command Line
+* Help Text
+*
+* If no other command should be executed, use "exit" in your code
 **/
 $app->command('help', 'h',
     function() use ($app) {
@@ -25,7 +27,6 @@ $app->command('hello-world:',
         echo "Hello $name\n";
     })
     ->help("Hello World Example.");
-
 
 /**
 * Execute The App
