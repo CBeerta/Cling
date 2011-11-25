@@ -48,21 +48,6 @@ class Cling
     public $appname;
 
     /**
-    * List of Short Options of all commands or options
-    **/    
-    private $_shortopts = array();
-    
-    /**
-    * List of Long Options of all commands or options
-    **/    
-    private $_longopts = array();
-    
-    /**
-    * All Help Texts
-    **/    
-    private $_helptexts = array();
-
-    /**
     * The Routes
     **/    
     private $_routes = array();
@@ -150,11 +135,8 @@ class Cling
             'longopt' => $longopt,
             'shortopt' => $shortopt,
             'command' => $command,
+            'helptext' => '',
         );
-        
-        $this->_shortopts[] = $shortopt;
-        $this->_longopts[] = $longopt;
-        $this->_helptexts[] = '';
                 
         return $this;
     }
@@ -168,8 +150,10 @@ class Cling
     **/
     function help($text)
     {   
+        // "guess" the last route added.
+        // FIXME: this could be more elegant
         $index = count($this->_routes) - 1;
-        $this->_helptexts[$index] = $text;
+        $this->_routes[$index]['helptext'] = $text;
     }
     
     /**
@@ -212,22 +196,22 @@ class Cling
     **/
     public function __toString()
     {   
-        $str = "Usage: ".$this->appname." [OPTION]...\n";
+        $str = "Usage: " . $this->appname . " [OPTION]...\n";
         
-        foreach ($this->_longopts as $k=>$v) {
+        foreach ($this->_routes as $route) {
             
             $str .= "\t";
-            if (!empty($this->_shortopts[$k])) {
-                $str .= "-" . rtrim($this->_shortopts[$k], ':') . ", ";
+            if (!empty($route['shortopt'])) {
+                $str .= "-" . rtrim($route['shortopt'], ':') . ", ";
             } else {
                 $str .= "    ";
             }
             
             // TODO: Help Text should align to longest longopt
             //       And should also replate linebreaks with correct position
-            $str .= sprintf("--%-30s",rtrim($v, ':'));
+            $str .= sprintf("--%-30s",rtrim($route['longopt'], ':'));
             
-            $str .= "\t{$this->_helptexts[$k]}";
+            $str .= "\t{$route['helptext']}";
             $str .= "\n";
         }
 
@@ -247,7 +231,18 @@ class Cling
         
         try 
         {
-            $options = getopt(implode($this->_shortopts), $this->_longopts);
+            /**
+            * Go through all routes to collect short and longopts for getopt()
+            **/
+            $shortopts = '';
+            $longopts = array();
+            foreach ($this->_routes as $route) {
+                $shortopts .= $route['shortopt'];
+                $longopts[] = $route['longopt'];
+            }
+            
+            $options = getopt($shortopts, $longopts);
+            
             /**
             * Go through all routes, and execute commands
             **/
