@@ -145,6 +145,12 @@ class Cling_Route
     **/
     public function dispatch($value = array())
     {
-        call_user_func($this->callable, $value);
+        if (is_callable($this->callable)) {
+            call_user_func($this->callable, $value);
+            return true;
+        }
+        return false;        
     }
+    
+    
 }

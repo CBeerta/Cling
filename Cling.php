@@ -257,28 +257,31 @@ class Cling
             }
             
             $options = getopt($shortopts, $longopts);
-
-            /**
-            * No (valid) Options give.
-            * FIXME: How to handle the help text?
-            **/
-            if (empty($options)) {
-                echo $this;
-                exit;
-            }
             
             /**
             * Go through all routes, and execute commands
             **/
+            $dispatched = false;
             foreach ($this->_routes as $route) {
                 foreach ($options as $k=>$v) {
                     if (rtrim($route->shortopt(), ':') === $k 
                         || rtrim($route->longopt(), ':') === $k
                     ) {
-                        $route->dispatch($v);
+                        $dispatched = $route->dispatch($v);
                         continue;
                     }
                 }                
+            }
+
+            if (!$dispatched) {
+                /**
+                * No (valid) Options give.
+                * FIXME: How to handle the help text?
+                **/
+                if (empty($options)) {
+                    echo $this;
+                    exit;
+                }
             }
         } 
         catch (Exception $e) 
@@ -290,7 +293,6 @@ class Cling
             }
         }
     }
-
 
 }
 
