@@ -62,6 +62,16 @@ class Cling
     * The Options
     **/    
     private $_options = array();
+    
+    /**
+    * Longest "longopt" to help align the help page
+    **/
+    private $_longest = 8;
+
+    /**
+    * Custom user set notFound function
+    **/
+    private $_userNotFound = null;
 
     /**
     * Constructor
@@ -72,7 +82,7 @@ class Cling
     **/
     public function __construct($options = array())
     {
-        $this->appname = $_SERVER['argv'][0];
+        $this->appname = basename($_SERVER['argv'][0]);
         set_error_handler(array('Cling', 'handleErrors'));
 
         $this->_options = array_merge(
@@ -135,6 +145,10 @@ class Cling
 
         if (!is_callable($command)) {
             throw new Exception("Command not Callable");
+        }
+        
+        if (strlen($longopt) > $this->_longest) {
+            $this->_longest = strlen($longopt) + 1 ;
         }
         
         $route = new Cling_Route();
@@ -205,32 +219,52 @@ class Cling
     }
 
     /**
-    * Print Help
+    * notFound Handler
+    *
+    * If a paramater is given, and it is not null: Set a custom notFound handler
+    * If no parameter is given, check if a custom notFound has been defined and call
+    * If neither of the two, print the default help page
+    *
+    * The notFound function will always exit when called.
+    *
+    * @param mixed $callable A function that is to be called
     *
     * @return void
     **/
-    public function __toString()
+    public function notFound($callable = null)
     {   
+        if (!is_null($callable) && is_callable($callable)) {
+            $this->_userNotFound = $callable;
+            return;
+        } else if (!is_null($callable)) {
+            throw new Exception("Passed a non callable function");
+        } else if (!is_null($this->_userNotFound)) {
+            call_user_func($this->_userNotFound);
+            exit;
+        }
+            
         $str = "Usage: " . $this->appname . " [OPTION]...\n";
         
         foreach ($this->_routes as $route) {
             
-            $str .= "\t";
+            $str .= "  ";
             if ($route->shortopt()) {
                 $str .= "-" . rtrim($route->shortopt(), ':') . ", ";
             } else {
                 $str .= "    ";
             }
             
-            // TODO: Help Text should align to longest longopt
-            //       And should also replate linebreaks with correct position
-            $str .= sprintf("--%-30s", rtrim($route->longopt(), ':'));
+            $str .= sprintf(
+                "--%-{$this->_longest}s", 
+                rtrim($route->longopt(), ':')
+            );
             
-            $str .= "\t" . $route->help();
+            $str .= $route->help();
             $str .= "\n";
         }
 
-        return $str;
+        echo $str;
+        exit;
     }
 
     /**
@@ -276,12 +310,8 @@ class Cling
             if (!$dispatched) {
                 /**
                 * No (valid) Options give.
-                * FIXME: How to handle the help text?
                 **/
-                if (empty($options)) {
-                    echo $this;
-                    exit;
-                }
+                echo $this->notFound();
             }
         } 
         catch (Exception $e) 

@@ -37,3 +37,29 @@ As Cling is **very** new, there's still lot of work left to be done
     $app->run();
 
 
+# Documentation
+
+## Configure Cling
+
+To configue Cling, you can pass an associative array to the constructor method. The Options are:
+
+* **debug** Enable or Disable debug output (Default: false)
+
+
+## Routes
+
+### Custom not Found Handler
+
+If a user calls the application without specifying a valid command line option, the notFound handler is called.
+You can override the default handler, by calling the notFound method with a user function:
+
+    $app = new Cling();
+    
+    $app->notFound(function() use ($app) {
+        echo "I can't help you...\n";
+    });
+    
+    
+The application will `exit` immediatle if the notFound method is being called.
+
+
