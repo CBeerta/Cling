@@ -14,11 +14,10 @@ Cling is a Micro Framework for building Command Line Applications
 As Cling is **very** new, there's still lot of work left to be done
 
 * Testing
-* Help Output needs Text
 * Template System
 * Logging
 * Proper Error and Eception Handling
-* Piped Input
+* The :stdin command needs to check if there is data coming in on <STDIN>
 
 # Requirements
 
@@ -45,8 +44,19 @@ To configue Cling, you can pass an associative array to the constructor method. 
 
 * **debug** Enable or Disable debug output (Default: false)
 
-
 ## Routes
+
+### Command Line Options
+
+A Command Line Option can be handled by the `command` function:
+
+    $app->command('<Long Option Name>', '<1 letter short option'>, '<callable>');
+    
+The Short Option parameter is optional.
+
+### Special Routes
+
+A `:*` command is a Route that is executed regardless of Command Line Options. Multiple `:*` Routes are executed in the order they are set.
 
 ### Custom not Found Handler
 
@@ -61,5 +71,6 @@ You can override the default handler, by calling the notFound method with a user
     
     
 The application will `exit` immediatle if the notFound method is being called.
+
 
 

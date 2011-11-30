@@ -15,19 +15,37 @@ $app = new Cling(array('debug' => true));
 **/
 $app->command('help', 'h',
     function() use ($app) {
-        echo $app;
+        echo $app->notFound();
         exit;
     })
     ->help("This Helptext.");
 
 /**
-* Hellow World long option with a parameter
+* Hello World long option with a parameter
 **/
 $app->command('hello-world:', 
     function($name) {
         echo "Hello $name\n";
     })
     ->help("Hello World Example.");
+
+/**
+* A Route that is executed without a command line option
+**/
+$app->command(':*', 
+    function() use ($app) {
+        echo "Always Executed.\n";
+    });
+
+/**
+* A route that captures piped data from stdin
+**/
+$app->command(':stdin', 
+    function() use ($app) {
+        while (($data = $app->route()->readStdin()) !== false) {
+            print_r($data);
+        }
+    });
 
 /**
 * Execute The App

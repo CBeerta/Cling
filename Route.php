@@ -63,13 +63,22 @@ class Cling_Route
     protected $callable;
     
     /**
+    * Wether or not this route is actually an option
+    **/
+    protected $isOption = false;
+
+    /**
+    * FP to stdin if needed
+    **/
+    private $_stdin = false;
+    
+    /**
     * Constructor
     *
     * @return void
     **/
     public function __construct() 
     {
-        return $this;
     }
     
     /**
@@ -84,6 +93,26 @@ class Cling_Route
         if ($longopt === null) {
             return $this->longopt;
         }
+        
+        switch ($longopt) {
+        
+        case ':*':
+            $this->isOption = false;
+            break;
+        
+        case ':stdin':
+            $this->_stdin = fopen('php://stdin', 'r');
+            if (!$this->_stdin) {
+                throw new Exception("Unable to open STDIN");
+            }
+            $this->isOption = false;
+            break;
+            
+        default:
+            $this->isOption = true;
+            break;
+        }
+
         $this->longopt = $longopt;
         return $this;
     }
@@ -151,6 +180,28 @@ class Cling_Route
         }
         return false;        
     }
+
+    /**
+    * Read Stdin and return line by line
+    *
+    * @return string
+    **/
+    public function readStdin()
+    {
+        if (feof($this->_stdin)) {
+            return false;
+        }
+        return fgets($this->_stdin);
+    }
     
+    /**
+    * Wether this route is a option or not
+    *
+    * @return bool
+    **/
+    public function isOption()
+    {
+        return $this->isOption;
+    }
     
 }

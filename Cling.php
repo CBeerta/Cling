@@ -59,6 +59,11 @@ class Cling
     private $_routes = array();
     
     /**
+    * The Route that is currently beeing executed
+    **/    
+    private $_currentRoute = null;
+
+    /**
     * The Options
     **/    
     private $_options = array();
@@ -66,7 +71,7 @@ class Cling
     /**
     * Longest "longopt" to help align the help page
     **/
-    private $_longest = 8;
+    private $_longest = 1;
 
     /**
     * Custom user set notFound function
@@ -148,7 +153,7 @@ class Cling
         }
         
         if (strlen($longopt) > $this->_longest) {
-            $this->_longest = strlen($longopt) + 1 ;
+            $this->_longest = strlen(rtrim($longopt, ':'));
         }
         
         $route = new Cling_Route();
@@ -175,7 +180,6 @@ class Cling
         if ($value === null && isset($this->_options[$longopt])) {
             return $this->_options[$longopt];
         }
-        
         $this->_options[$longopt] = $value;
     }
 
@@ -219,6 +223,16 @@ class Cling
     }
 
     /**
+    * Return the currently executed Route object
+    *
+    * @return mixed
+    **/
+    public function route() 
+    {
+        return $this->_currentRoute;
+    }
+    
+    /**
     * notFound Handler
     *
     * If a paramater is given, and it is not null: Set a custom notFound handler
@@ -246,6 +260,10 @@ class Cling
         $str = "Usage: " . $this->appname . " [OPTION]...\n";
         
         foreach ($this->_routes as $route) {
+
+            if (!$route->isOption()) {
+                continue;
+            }
             
             $str .= "  ";
             if ($route->shortopt()) {
@@ -255,9 +273,15 @@ class Cling
             }
             
             $str .= sprintf(
-                "--%-{$this->_longest}s", 
+                "--%-{$this->_longest}s",
                 rtrim($route->longopt(), ':')
             );
+
+            if (strpos($route->longopt(), ':') !== false) {
+                $str .= "=<VALUE> ";
+            } else {
+                $str .= "         ";
+            }
             
             $str .= $route->help();
             $str .= "\n";
@@ -281,22 +305,21 @@ class Cling
         try 
         {
             /**
-            * Go through all routes to collect short and longopts for getopt()
-            **/
-            $shortopts = '';
-            $longopts = array();
-            foreach ($this->_routes as $route) {
-                $shortopts .= $route->shortopt();
-                $longopts[] = $route->longopt();
-            }
-            
-            $options = getopt($shortopts, $longopts);
-            
-            /**
             * Go through all routes, and execute commands
             **/
             $dispatched = false;
             foreach ($this->_routes as $route) {
+                $this->_currentRoute = $route;
+
+                if (!$route->isOption()) {
+                    $dispatched = $route->dispatch();
+                    continue;
+                }
+                
+                /**
+                * Parse Commandline with getopt, one route at a time
+                **/
+                $options = getopt($route->shortopt(), array($route->longopt()));
                 foreach ($options as $k=>$v) {
                     if (rtrim($route->shortopt(), ':') === $k 
                         || rtrim($route->longopt(), ':') === $k
@@ -304,13 +327,13 @@ class Cling
                         $dispatched = $route->dispatch($v);
                         continue;
                     }
-                }                
+                }
             }
 
+            $this->_currentRoute = null;
+
             if (!$dispatched) {
-                /**
-                * No (valid) Options give.
-                **/
+                // No (valid) Options give.
                 echo $this->notFound();
             }
         } 
