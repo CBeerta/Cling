@@ -69,11 +69,6 @@ class Cling
     private $_options = array();
     
     /**
-    * Longest "longopt" to help align the help page
-    **/
-    private $_longest = 1;
-
-    /**
     * Custom user set notFound function
     **/
     private $_userNotFound = null;
@@ -150,10 +145,6 @@ class Cling
 
         if (!is_callable($command)) {
             throw new Exception("Command not Callable");
-        }
-        
-        if (strlen($longopt) + 9 > $this->_longest) {
-            $this->_longest = strlen(rtrim($longopt, ':')) + 9;
         }
         
         $route = new Cling_Route();
@@ -258,32 +249,39 @@ class Cling
         }
             
         $str = "Usage: " . $this->appname . " [OPTION]...\n";
-        
-        foreach ($this->_routes as $route) {
 
+        $lines = array(); $longest = 0;
+        foreach ($this->_routes as $k => $route) {
             if (!$route->isOption()) {
                 continue;
             }
-            
-            $str .= "  ";
+
+            $line = "  ";
             if ($route->shortopt()) {
-                $str .= "-" . rtrim($route->shortopt(), ':') . ", ";
+                $line .= "-" . rtrim($route->shortopt(), ':') . ", ";
             } else {
-                $str .= "    ";
+                $line .= "    ";
             }
-            
             $longopt = rtrim($route->longopt(), ':');
 
+            $longopt = rtrim($route->longopt(), ':');
             if (strpos($route->longopt(), ':') !== false) {
-                $longopt .= "=<VALUE> ";
+                $longopt .= "=<VALUE>";
             }
+            $line .= "--" . $longopt;
             
-            $str .= sprintf("--%-{$this->_longest}s", $longopt);
-            
-            $str .= $route->help();
-            $str .= "\n";
+            if (strlen($line) > $longest) {
+                $longest = strlen($line);
+            }
+            $lines[$k] = $line;  
         }
-
+        
+        foreach ($lines as $k => $line) {
+            $str .= sprintf("%-{$longest}s ", $line);
+            $str .= $this->_routes[$k]->help();
+            $str .= "\n";
+        }        
+        
         echo $str;
         exit;
     }
