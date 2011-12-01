@@ -152,8 +152,8 @@ class Cling
             throw new Exception("Command not Callable");
         }
         
-        if (strlen($longopt) > $this->_longest) {
-            $this->_longest = strlen(rtrim($longopt, ':'));
+        if (strlen($longopt) + 9 > $this->_longest) {
+            $this->_longest = strlen(rtrim($longopt, ':')) + 9;
         }
         
         $route = new Cling_Route();
@@ -272,16 +272,13 @@ class Cling
                 $str .= "    ";
             }
             
-            $str .= sprintf(
-                "--%-{$this->_longest}s",
-                rtrim($route->longopt(), ':')
-            );
+            $longopt = rtrim($route->longopt(), ':');
 
             if (strpos($route->longopt(), ':') !== false) {
-                $str .= "=<VALUE> ";
-            } else {
-                $str .= "         ";
+                $longopt .= "=<VALUE> ";
             }
+            
+            $str .= sprintf("--%-{$this->_longest}s", $longopt);
             
             $str .= $route->help();
             $str .= "\n";
