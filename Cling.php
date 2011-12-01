@@ -262,7 +262,6 @@ class Cling
             } else {
                 $line .= "    ";
             }
-            $longopt = rtrim($route->longopt(), ':');
 
             $longopt = rtrim($route->longopt(), ':');
             if (strpos($route->longopt(), ':') !== false) {
