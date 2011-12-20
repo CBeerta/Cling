@@ -336,7 +336,7 @@ class Cling
             if ($this->option('debug')) {
                 throw new Exception($e);
             } else {
-                die("Application terminated unexpectedly.\n");
+                die("ERROR: " . $e->getMessage() . "\n");
             }
         }
     }
