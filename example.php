@@ -6,7 +6,11 @@
 
 require_once 'Cling.php';
 
-$app = new Cling(array('debug' => true));
+$app = new Cling(
+    array(
+        'debug' => true,
+    )
+);
 
 /**
 * Help Text
@@ -40,12 +44,14 @@ $app->command(':*',
 /**
 * A route that captures piped data from stdin
 **/
+/*
 $app->command(':stdin', 
     function() use ($app) {
         while (($data = $app->route()->readStdin()) !== false) {
             print_r($data);
         }
     });
+*/
 
 /**
 * Execute The App

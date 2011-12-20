@@ -69,8 +69,24 @@ You can override the default handler, by calling the notFound method with a user
         echo "I can't help you...\n";
     });
     
-    
 The application will `exit` immediatle if the notFound method is being called.
 
+## Views
+
+Console Applications should, just like a Website, facilitate Views:
+
+    $app = new Cling(array('template.path' => 'views/'));
+    
+    $app->command('hello-world:', function($name) {
+        $app->view->set('name', $name);
+        $app->view->display('example.txt.php')
+    })->help("Example with a View.");
+    
+The view would look then something like:
+    
+    Hello <?php echo $name; ?>!
+    
+    I Hope You're doing fine.
 
 
+    

@@ -74,6 +74,11 @@ class Cling
     private $_userNotFound = null;
 
     /**
+    * Cling View
+    **/
+    public $view = null;
+
+    /**
     * Constructor
     *
     * @param array $options User Options
@@ -87,10 +92,14 @@ class Cling
 
         $this->_options = array_merge(
             array(
+                'template.path' => __DIR__ . '/views/',
                 'debug' => false,
                 ), 
             $options
         );
+        
+        $this->view = new Cling_View();
+        $this->view->setPath($this->_options['template.path']);
     }
 
     /**
