@@ -77,7 +77,7 @@ Console Applications should, just like a Website, facilitate Views:
 
     $app = new Cling(array('template.path' => 'views/'));
     
-    $app->command('hello-world:', function($name) {
+    $app->command('hello-world:', function($name) use ($app) {
         $app->view->set('name', $name);
         $app->view->display('example.txt.php')
     })->help("Example with a View.");
