@@ -159,7 +159,7 @@ class Cling
         $route = new Cling_Route();
         $route->longopt($longopt)
             ->shortopt($shortopt)
-            ->callable($command)
+            ->is_callable($command)
             ->help('');
 
         $this->_routes[] = $route;
@@ -241,16 +241,16 @@ class Cling
     *
     * The notFound function will always exit when called.
     *
-    * @param mixed $callable A function that is to be called
+    * @param mixed $is_callable A function that is to be called
     *
     * @return void
     **/
-    public function notFound($callable = null)
+    public function notFound($is_callable = null)
     {   
-        if (!is_null($callable) && is_callable($callable)) {
-            $this->_userNotFound = $callable;
+        if (!is_null($is_callable) && is_callable($is_callable)) {
+            $this->_userNotFound = $is_callable;
             return;
-        } else if (!is_null($callable)) {
+        } else if (!is_null($is_callable)) {
             throw new Exception("Passed a non callable function");
         } else if (!is_null($this->_userNotFound)) {
             call_user_func($this->_userNotFound);

@@ -60,7 +60,7 @@ class Cling_Route
     /**
     * Callable to execute
     **/
-    protected $callable;
+    protected $is_callable;
     
     /**
     * Wether or not this route is actually an option
@@ -152,16 +152,16 @@ class Cling_Route
     /**
     * Get/Set the Help Text Command
     *
-    * @param string $callable Callable for this route
+    * @param string $is_callable Callable for this route
     *
     * @return void
     **/
-    public function callable($callable = null)
+    public function is_callable($is_callable = null)
     {
-        if ($callable === null) {
-            return $this->callable;
+        if ($is_callable === null) {
+            return $this->is_callable;
         }
-        $this->callable = $callable;
+        $this->is_callable = $is_callable;
         return $this;
     }
 
@@ -174,8 +174,8 @@ class Cling_Route
     **/
     public function dispatch($value = array())
     {
-        if (is_callable($this->callable)) {
-            call_user_func($this->callable, $value);
+        if (is_callable($this->is_callable)) {
+            call_user_func($this->is_callable, $value);
             return true;
         }
         return false;        
