@@ -1,0 +1,17 @@
+{
+    "name": "cbeerta/cling",
+    "description": "Cling is a Micro Framework for building Command Line Applications",
+    "authors": [
+        {
+            "name": "Claus Beerta",
+            "email": "claus@beerta.de"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">= 5.3.0"
+    },
+    "autoload": {
+        "classmap": ["Cling.php"]
+    }
+}
