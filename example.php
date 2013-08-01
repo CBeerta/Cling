@@ -4,9 +4,9 @@
 * Little Example Application to Demo Cling
 **/
 
-require_once 'Cling.php';
+require_once 'Cling/Cling.php';
 
-$app = new Cling(
+$app = new \Cling\Cling(
     array(
         'debug' => true,
     )

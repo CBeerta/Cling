@@ -31,11 +31,16 @@
 * @link     http://claus.beerta.de/
 **/
 
+namespace Cling;
+
+use Cling\View;
+use Cling\Route;
+
 /**
 * Register Autoloader
 * Loads "Cling_*" Class files from the directory Cling.php is located in
 **/
-spl_autoload_register(array('Cling', 'autoload'));
+spl_autoload_register(array('\Cling\Cling', 'autoload'));
 
 /**
 * Cling - Microframework for CLI Applications
@@ -88,7 +93,7 @@ class Cling
     public function __construct($options = array())
     {
         $this->appname = basename($_SERVER['argv'][0]);
-        set_error_handler(array('Cling', 'handleErrors'));
+        set_error_handler(array('\Cling\Cling', 'handleErrors'));
 
         $this->_options = array_merge(
             array(
@@ -98,7 +103,7 @@ class Cling
             $options
         );
         
-        $this->view = new Cling_View();
+        $this->view = new View();
         $this->view->setPath($this->_options['template.path']);
     }
 
@@ -156,7 +161,7 @@ class Cling
             throw new Exception("Command not Callable");
         }
         
-        $route = new Cling_Route();
+        $route = new Route();
         $route->longopt($longopt)
             ->shortopt($shortopt)
             ->is_callable($command)
@@ -211,12 +216,15 @@ class Cling
         if (strpos($class, 'Cling') !== 0) {
             return;
         }
+        
+        $fileName = str_replace('_', DIRECTORY_SEPARATOR, substr($class, 5));
+        $fileName = str_replace('\\', '', $fileName);
 
         $file = dirname(__FILE__) 
             . '/' 
-            . str_replace('_', DIRECTORY_SEPARATOR, substr($class, 5)) 
+            . str_replace('_', DIRECTORY_SEPARATOR, $fileName)
             . '.php';
-            
+
         if ( file_exists($file) ) {
             include_once $file;
         }    

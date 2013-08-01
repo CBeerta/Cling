@@ -31,6 +31,8 @@
 * @link     http://claus.beerta.de/
 **/
 
+namespace Cling;
+
 /**
 * Cling_Route
 *
@@ -40,7 +42,7 @@
 * @license  http://www.opensource.org/licenses/mit-license.php MIT License
 * @link     http://claus.beerta.de/
 **/
-class Cling_Route
+class Route
 {
     /**
     * Long Option Name

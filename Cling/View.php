@@ -45,6 +45,8 @@
 * @link     http://claus.beerta.de/
 **/
 
+namespace Cling;
+
 /**
 * Simple Tempalte Class
 *
@@ -54,7 +56,7 @@
 * @license  http://www.opensource.org/licenses/mit-license.php MIT License
 * @link     http://claus.beerta.de/
 **/
-class Cling_View
+class View
 {
     /** 
     * Template Variables
