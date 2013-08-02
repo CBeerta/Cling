@@ -88,5 +88,33 @@ The view would look then something like:
     
     I Hope You're doing fine.
 
+## Logging
 
+To Log message to files, stdout or stderr:
+
+    $app = new Cling(array('log.destination' => \Cling\Logger::LOG_STDOUT));
     
+    $app->logger->logInfo('Hello World!');
+    
+### Log Destinations
+
+* \Cling\Logger::LOG_STDOUT    => Log to STDOUT
+* \Cling\Logger::LOG_STDERR    => Log to STDERR
+* \Cling\Logger::LOG_FILE      => Log to a file in a directory set by 'log.dir'
+* \Cling\Logger::LOG_ERROR_LOG => Log via Default 'error_log'
+
+### Log Levels
+
+The Following Log Levels Are available
+
+* logEmerg   => Emergency: system is unusable
+* logAlert   => Alert: action must be taken immediately
+* logCrit    => Critical: critical conditions
+* logError   => Error: error conditions
+* logWarn    => Warning: warning conditions
+* logNotice  => Notice: normal but significant condition
+* logInfo    => Informational: informational messages
+* logDebug   => Debug: debug messages
+
+
+

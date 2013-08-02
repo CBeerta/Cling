@@ -158,7 +158,7 @@ class Route
     *
     * @return void
     **/
-    public function is_callable($is_callable = null)
+    public function isCallable($is_callable = null)
     {
         if ($is_callable === null) {
             return $this->is_callable;

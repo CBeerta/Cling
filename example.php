@@ -9,6 +9,8 @@ require_once 'Cling/Cling.php';
 $app = new \Cling\Cling(
     array(
         'debug' => true,
+        'log.destination' => \Cling\Logger::LOG_STDERR,
+        'log.dir' => __DIR__
     )
 );
 
@@ -38,6 +40,7 @@ $app->command('hello-world:',
 **/
 $app->command(':*', 
     function() use ($app) {
+        $app->logger->logNotice('Hello World Logging');
         echo "Always Executed.\n";
     });
 

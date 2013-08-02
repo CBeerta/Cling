@@ -84,6 +84,11 @@ class Cling
     public $view = null;
 
     /**
+    * Logger
+    **/
+    public $logger = null;
+
+    /**
     * Constructor
     *
     * @param array $options User Options
@@ -99,12 +104,21 @@ class Cling
             array(
                 'template.path' => __DIR__ . '/views/',
                 'debug' => false,
+                'log.dir' => __DIR__,
+                'log.severity' => Logger::INFO,
+                'log.destination' => Logger::LOG_STDOUT,
                 ), 
             $options
         );
         
         $this->view = new View();
         $this->view->setPath($this->_options['template.path']);
+
+        $this->logger = new Logger(
+            $this->_options['log.dir'], 
+            $this->_options['log.severity'],
+            $this->_options['log.destination']
+        );
     }
 
     /**
@@ -124,7 +138,7 @@ class Cling
         $errline = '' 
     ) {
         if ( error_reporting() & $errno ) {
-            throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
+            throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
         }
         return true;
     }
@@ -164,7 +178,7 @@ class Cling
         $route = new Route();
         $route->longopt($longopt)
             ->shortopt($shortopt)
-            ->is_callable($command)
+            ->isCallable($command)
             ->help('');
 
         $this->_routes[] = $route;
