@@ -35,6 +35,7 @@ namespace Cling;
 
 use Cling\View;
 use Cling\Route;
+use Cling\Logger;
 
 /**
 * Register Autoloader
@@ -81,12 +82,12 @@ class Cling
     /**
     * Cling View
     **/
-    public $view = null;
+    private $_view = null;
 
     /**
     * Logger
     **/
-    public $logger = null;
+    private $_logger = null;
 
     /**
     * Constructor
@@ -111,10 +112,10 @@ class Cling
             $options
         );
         
-        $this->view = new View();
-        $this->view->setPath($this->_options['template.path']);
+        $this->_view = new View();
+        $this->_view->setPath($this->_options['template.path']);
 
-        $this->logger = new Logger(
+        $this->_logger = new Logger(
             $this->_options['log.dir'], 
             $this->_options['log.severity'],
             $this->_options['log.destination']
@@ -314,6 +315,26 @@ class Cling
         
         echo $str;
         exit;
+    }
+
+    /**
+    * Return the current _view 
+    *
+    * @return mixed
+    **/
+    public function view() 
+    {
+        return $this->_view;
+    }
+
+    /**
+    * Return the current _logger
+    *
+    * @return mixed
+    **/
+    public function log() 
+    {
+        return $this->_logger;
     }
 
     /**

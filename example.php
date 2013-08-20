@@ -40,7 +40,8 @@ $app->command('hello-world:',
 **/
 $app->command(':*', 
     function() use ($app) {
-        $app->logger->logNotice('Hello World Logging');
+        $app->log()->notice('Hello World Logging');
+        $app->view()->set('name', 'value');
         echo "Always Executed.\n";
     });
 

@@ -78,8 +78,8 @@ Console Applications should, just like a Website, facilitate Views:
     $app = new Cling(array('template.path' => 'views/'));
     
     $app->command('hello-world:', function($name) use ($app) {
-        $app->view->set('name', $name);
-        $app->view->display('example.txt.php')
+        $app->view()->set('name', $name);
+        $app->view()->display('example.txt.php')
     })->help("Example with a View.");
     
 The view would look then something like:
@@ -94,7 +94,7 @@ To Log message to files, stdout or stderr:
 
     $app = new Cling(array('log.destination' => \Cling\Logger::LOG_STDOUT));
     
-    $app->logger->logInfo('Hello World!');
+    $app->log()->info('Hello World!');
     
 ### Log Destinations
 
@@ -107,14 +107,14 @@ To Log message to files, stdout or stderr:
 
 The Following Log Levels Are available
 
-* logEmerg   => Emergency: system is unusable
-* logAlert   => Alert: action must be taken immediately
-* logCrit    => Critical: critical conditions
-* logError   => Error: error conditions
-* logWarn    => Warning: warning conditions
-* logNotice  => Notice: normal but significant condition
-* logInfo    => Informational: informational messages
-* logDebug   => Debug: debug messages
+* emerg   => Emergency: system is unusable
+* alert   => Alert: action must be taken immediately
+* crit    => Critical: critical conditions
+* error   => Error: error conditions
+* warn    => Warning: warning conditions
+* notice  => Notice: normal but significant condition
+* info    => Informational: informational messages
+* debug   => Debug: debug messages
 
 
 

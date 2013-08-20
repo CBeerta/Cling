@@ -246,7 +246,7 @@ class Logger
     *
     * @return void
     */
-    public function logDebug($line, $args = self::NO_ARGUMENTS)
+    public function debug($line, $args = self::NO_ARGUMENTS)
     {
         $this->log($line, self::DEBUG);
     }
@@ -302,7 +302,7 @@ class Logger
     *
     * @return void
     */
-    public function logInfo($line, $args = self::NO_ARGUMENTS)
+    public function info($line, $args = self::NO_ARGUMENTS)
     {
         $this->log($line, self::INFO, $args);
     }
@@ -316,7 +316,7 @@ class Logger
     *
     * @return void
     */
-    public function logNotice($line, $args = self::NO_ARGUMENTS)
+    public function notice($line, $args = self::NO_ARGUMENTS)
     {
         $this->log($line, self::NOTICE, $args);
     }
@@ -331,7 +331,7 @@ class Logger
     *
     * @return void
     */
-    public function logWarn($line, $args = self::NO_ARGUMENTS)
+    public function warn($line, $args = self::NO_ARGUMENTS)
     {
         $this->log($line, self::WARN, $args);
     }
@@ -345,7 +345,7 @@ class Logger
     *
     * @return void
     */
-    public function logError($line, $args = self::NO_ARGUMENTS)
+    public function error($line, $args = self::NO_ARGUMENTS)
     {
         $this->log($line, self::ERR, $args);
     }
@@ -358,7 +358,7 @@ class Logger
     *
     * @return void
     */
-    public function logAlert($line, $args = self::NO_ARGUMENTS)
+    public function alert($line, $args = self::NO_ARGUMENTS)
     {
         $this->log($line, self::ALERT, $args);
     }
@@ -371,7 +371,7 @@ class Logger
     *
     * @return void
     */
-    public function logCrit($line, $args = self::NO_ARGUMENTS)
+    public function crit($line, $args = self::NO_ARGUMENTS)
     {
         $this->log($line, self::CRIT, $args);
     }
@@ -384,7 +384,7 @@ class Logger
     *
     * @return void
     */
-    public function logEmerg($line, $args = self::NO_ARGUMENTS)
+    public function emerg($line, $args = self::NO_ARGUMENTS)
     {
         $this->log($line, self::EMERG, $args);
     }
