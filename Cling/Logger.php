@@ -442,10 +442,10 @@ class Logger
             error_log($line, 3, $this->_logFilePath);
             break;
         case self::LOG_STDOUT:
-            fprintf(STDOUT, $line);
+            fwrite(STDOUT, $line);
             break;
         case self::LOG_STDERR:
-            fprintf(STDERR, $line);
+            fwrite(STDERR, $line);
             break;
         case self::LOG_ERROR_LOG:
             return error_log($line);
